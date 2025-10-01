@@ -1,0 +1,21 @@
+.header {
+  margin-top: 16px;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unitsBtn {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  background-color: var(--neutral-800);
+  color: var(--neutral);
+
+  padding: 9.5px 10px;
+  border-radius: var(--radius-6);
+}

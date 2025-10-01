@@ -1,0 +1,58 @@
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.cityInput {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0;
+  color: var(--neutral-200);
+
+  width: 100%;
+  background: var(--neutral-800) url("/icons/search.svg") no-repeat 24px center;
+  border-radius: var(--radius-12);
+  padding: 16px 0 16px 60px;
+  margin-bottom: 12px;
+
+  border: none;
+  outline: none;
+}
+
+.cityInput:hover {
+  background-color: var(--neutral-700);
+}
+
+.cityInput:focus {
+  outline: 1px solid var(--neutral-200);
+}
+
+.cityInput::placeholder {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0;
+  color: var(--neutral-200);
+}
+
+.submitBtn {
+  width: 100%;
+  composes: text-preset-5-medium from global;
+  background-color: var(--blue-500);
+  padding: 16px 24px;
+  border-radius: var(--radius-12);
+}
+
+.submitBtn:hover {
+  background-color: var(--blue-700);
+}
+
+.submitBtn:active {
+  background-color: var(--blue-500);
+  outline: 2px solid var(--blue-500);
+}

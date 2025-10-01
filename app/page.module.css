@@ -1,0 +1,6 @@
+.title {
+  composes: text-preset-2 from global;
+  margin: 48px 0;
+  color: var(--neutral);
+  text-align: center;
+}
