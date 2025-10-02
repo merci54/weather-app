@@ -1,10 +1,8 @@
 "use client";
 
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import css from "./SearchForm.module.css";
 import * as Yup from "yup";
-import Image from "next/image";
-
 const formSchema = Yup.object().shape({
   city: Yup.string().required("City is required"),
 });
@@ -30,6 +28,7 @@ export default function SearchForm() {
             id="city"
             name="city"
             placeholder="Search for a place..."
+            type="text"
           />
           <button className={css.submitBtn} type="submit">
             {isSubmitting ? "Searching..." : "Search"}

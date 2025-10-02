@@ -1,0 +1,59 @@
+.forecast {
+  width: 100%;
+  background-color: var(--neutral-800);
+  padding: 16px 20px;
+  border-radius: var(--radius-8);
+}
+
+.title {
+  composes: text-preset-5 from global;
+}
+
+.button {
+  padding: 8px 16px;
+  background-color: var(--neutral-600);
+  border-radius: var(--radius-8);
+
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--neutral);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.hourlyList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hourlyItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  border-radius: var(--radius-8);
+
+  background-color: var(--neutral-700);
+  border: 1px solid var(--neutral-600);
+}
+
+.time {
+  flex-grow: 1;
+  composes: text-preset-5-medium from global;
+}
+
+.degree {
+  composes: text-preset-7 from global;
+}

@@ -1,0 +1,65 @@
+.hero {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cityBlock {
+  padding: 41px 0;
+  text-align: center;
+  background: url("/hero/mobile-hero.svg") no-repeat center;
+  border-radius: var(--radius-20);
+}
+
+.textBlock {
+  margin-bottom: 16px;
+}
+
+.cityName {
+  composes: text-preset-4 from global;
+  color: var(--neutral);
+  margin-bottom: 12px;
+}
+
+.dateName {
+  composes: text-preset-6 from global;
+  color: var(--neutral);
+  opacity: 80%;
+}
+
+.degreeBlock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.temperature {
+  composes: text-preset-1 from global;
+}
+
+.dataList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dataItem {
+  background-color: var(--neutral-800);
+  border: 1px solid var(--neutral-600);
+  padding: 20px;
+  border-radius: var(--radius-12);
+
+  flex-basis: calc((100% - 16px) / 2);
+}
+
+.dataItemText {
+  composes: text-preset-6 from global;
+  color: var(--neutral-200);
+  margin-bottom: 24px;
+}
+
+.dataItemValue {
+  composes: text-preset-3 from global;
+}
