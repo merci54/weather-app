@@ -3,17 +3,44 @@
 import { Field, Form, Formik } from "formik";
 import css from "./SearchForm.module.css";
 import * as Yup from "yup";
+import { getUserInfo, getWeather } from "@/lib/api/weatherAPI";
+import { useUnitsStore } from "@/lib/stores/unitsStore";
+
 const formSchema = Yup.object().shape({
   city: Yup.string().required("City is required"),
 });
 
 export default function SearchForm() {
+  const { setCurrentWeather, setCountry, setCity, temp, speed, precipitation } =
+    useUnitsStore();
   const initialValues = {
     city: "",
   };
 
   const handleSubmit = async (value: typeof initialValues) => {
-    console.log(value);
+    try {
+      const userInfo = await getUserInfo(value.city);
+      const coords = {
+        latitude: userInfo.latitude,
+        longitude: userInfo.longitude,
+      };
+      const country = userInfo.country;
+      const weather = await getWeather(coords, temp, speed, precipitation);
+      const current = {
+        feelsLike: Math.trunc(weather.current.apparent_temperature),
+        humidity: weather.current.relative_humidity_2m,
+        wind: Math.trunc(weather.current.wind_speed_10m),
+        precipitation: weather.current.precipitation,
+        temperature: Math.trunc(weather.current.temperature_2m),
+      };
+
+      setCurrentWeather(current);
+      setCountry(country);
+      setCity(value.city);
+      console.log(weather);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <Formik
