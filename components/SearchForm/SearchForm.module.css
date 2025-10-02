@@ -1,3 +1,11 @@
+@media screen and (min-width: 770px) {
+  .form {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+  }
+}
+
 .inputWrapper {
   position: relative;
   width: 100%;
@@ -20,6 +28,12 @@
 
   border: none;
   outline: none;
+}
+
+@media screen and (min-width: 770px) {
+  .cityInput {
+    margin-bottom: 0;
+  }
 }
 
 .cityInput:hover {
@@ -46,6 +60,13 @@
   background-color: var(--blue-500);
   padding: 16px 24px;
   border-radius: var(--radius-12);
+}
+
+@media screen and (min-width: 770px) {
+  .submitBtn {
+    width: unset;
+    height: 100%;
+  }
 }
 
 .submitBtn:hover {

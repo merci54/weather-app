@@ -3,6 +3,7 @@ import { DM_Sans, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import "modern-normalize";
 import Header from "@/components/Header/Header";
+import GeolocationChecker from "@/components/GeolocationChecker/GeolocationChecker";
 
 const DMSans = DM_Sans({
   variable: "--font-dm-sans",

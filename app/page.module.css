@@ -5,6 +5,13 @@
   text-align: center;
 }
 
+@media screen and (min-width: 770px) {
+  .title {
+    max-width: 482px;
+    margin: 48px auto;
+  }
+}
+
 .mainContent {
   display: flex;
   flex-direction: column;
