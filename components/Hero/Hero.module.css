@@ -66,6 +66,12 @@
     gap: 20px;
   }
 }
+@media screen and (min-width: 1440px) {
+  .dataList {
+    flex-wrap: nowrap;
+    gap: 24px;
+  }
+}
 
 .dataItem {
   background-color: var(--neutral-800);
@@ -81,7 +87,6 @@
     flex-basis: calc((100% - 60px) / 4);
   }
 }
-
 .dataItemText {
   composes: text-preset-6 from global;
   color: var(--neutral-200);

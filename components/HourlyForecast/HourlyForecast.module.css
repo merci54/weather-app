@@ -1,8 +1,20 @@
 .forecast {
   width: 100%;
   background-color: var(--neutral-800);
-  padding: 16px 20px;
+  padding: 20px 16px;
   border-radius: var(--radius-8);
+}
+
+@media screen and (min-width: 770px) {
+  .forecast {
+    padding: 24px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .forecast {
+    max-width: 384px;
+  }
 }
 
 .title {
@@ -23,8 +35,8 @@
   font-weight: 500;
   color: var(--neutral);
 }
-
 .header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -56,4 +68,33 @@
 
 .degree {
   composes: text-preset-7 from global;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 120%;
+
+  width: 214px;
+
+  padding: 8px;
+  background-color: var(--neutral-800);
+  border: 1px solid var(--neutral-600);
+  border-radius: var(--radius-12);
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.switchBtn:hover {
+  background-color: var(--neutral-700);
+}
+
+.switchBtn:focus {
+  outline: 1px solid var(--neutral);
+}
+
+.switchBtn.active {
+  background-color: var(--neutral-700);
 }

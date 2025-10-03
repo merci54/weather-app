@@ -10,10 +10,13 @@ export default function Home() {
     <main className={css.main}>
       <Container>
         <h1 className={css.title}>How’s the sky looking today?</h1>
+        <SearchForm />
         <main className={css.mainContent}>
-          <SearchForm />
-          <Hero />
-          <DailyForecast />
+          <div className={css.mainWrapper}>
+            <Hero />
+            <DailyForecast />
+          </div>
+
           <HourlyForecast />
         </main>
       </Container>

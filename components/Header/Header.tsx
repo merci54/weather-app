@@ -31,6 +31,7 @@ export default function Header() {
         <div className={css.wrapper}>
           <div className={css.logo}>
             <Image
+              className={css.logoImage}
               src={"/icons/weather-logo.svg"}
               width={138}
               height={28}
@@ -40,6 +41,7 @@ export default function Header() {
 
           <button onClick={() => setIsOpen(!isOpen)} className={css.unitsBtn}>
             <Image
+              className={css.settingsIcon}
               src={"/icons/settings.svg"}
               width={14}
               height={14}
@@ -47,6 +49,7 @@ export default function Header() {
             />
             <span>Units</span>
             <Image
+              className={css.underIcon}
               src={"/icons/under.svg"}
               width={9}
               height={14}
