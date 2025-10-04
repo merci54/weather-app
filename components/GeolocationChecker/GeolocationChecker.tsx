@@ -1,10 +1,14 @@
 "use client";
 
-import { getWeather } from "@/lib/api/weatherAPI";
+import {
+  getLocationByCoords,
+  getUserInfo,
+  getWeather,
+} from "@/lib/api/weatherAPI";
 import { useUnitsStore } from "@/lib/stores/unitsStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Location } from "@/types/location";
-import axios from "axios";
+import Loader from "../Loader/Loader";
 
 export default function GeolocationChecker() {
   const {
@@ -15,47 +19,12 @@ export default function GeolocationChecker() {
     setCountry,
     setCity,
     hasHydrated,
-    currentWeather,
   } = useUnitsStore();
-
-  const getLocationByCoords = async (coords: Location) => {
-    try {
-      const response = await axios.get(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`
-      );
-
-      return {
-        city: response.data.city || response.data.locality || "Unknown City",
-        country: response.data.countryName || "Unknown Country",
-      };
-    } catch (error) {
-      console.error("Failed to get location info from BigDataCloud:", error);
-
-      try {
-        const fallbackResponse = await axios.get(
-          `https://geocoding-api.open-meteo.com/v1/search?name=&latitude=${coords.latitude}&longitude=${coords.longitude}&count=1`
-        );
-
-        if (
-          fallbackResponse.data.results &&
-          fallbackResponse.data.results.length > 0
-        ) {
-          return {
-            city: fallbackResponse.data.results[0].name,
-            country: fallbackResponse.data.results[0].country,
-          };
-        }
-      } catch (fallbackError) {
-        console.error("Fallback geocoding also failed:", fallbackError);
-      }
-    }
-
-    return null;
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
   const setDefaultWeather = async () => {
     try {
-      const defaultCoords: Location = { latitude: 51.5074, longitude: -0.1278 };
+      const defaultCoords = await getUserInfo("Berlin");
       const weather = await getWeather(
         defaultCoords,
         temp,
@@ -73,19 +42,15 @@ export default function GeolocationChecker() {
       };
 
       setCurrentWeather(current);
-      setCountry("United Kingdom");
-      setCity("London");
     } catch (error) {
       console.error("Failed to set default weather:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (!hasHydrated) {
-      return;
-    }
-
-    if (currentWeather && currentWeather.temperature !== 0) {
       return;
     }
 
@@ -99,7 +64,7 @@ export default function GeolocationChecker() {
       const options = {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000,
+        maximumAge: 0,
       };
 
       const success = async (position: GeolocationPosition) => {
@@ -140,6 +105,8 @@ export default function GeolocationChecker() {
         } catch (error) {
           console.error("Failed to get weather from geolocation:", error);
           await setDefaultWeather();
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -154,7 +121,6 @@ export default function GeolocationChecker() {
     getAutoWeather();
   }, [
     hasHydrated,
-    currentWeather,
     temp,
     speed,
     precipitation,
@@ -162,6 +128,10 @@ export default function GeolocationChecker() {
     setCountry,
     setCity,
   ]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return null;
 }

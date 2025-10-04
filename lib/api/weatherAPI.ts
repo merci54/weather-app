@@ -114,19 +114,18 @@ export const getFormattedDate = () => {
   return `${dayName}, ${monthName} ${dateNumber}, ${year}`;
 };
 
-export const getReverseGeocoding = async (coords: Location) => {
+export const getLocationByCoords = async (coords: Location) => {
   try {
-    const response = await axios.get(
-      `https://geocoding-api.open-meteo.com/v1/search?latitude=${coords.latitude}&longitude=${coords.longitude}&count=1`
+    const res = await axios.get(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`
     );
 
-    if (response.data.results && response.data.results.length > 0) {
-      return response.data.results[0];
-    }
-
-    return null;
+    return {
+      city: res.data.city || res.data.locality || "Unknown City",
+      country: res.data.countryName || "Unknown Country",
+    };
   } catch (error) {
-    console.error("Reverse geocoding failed:", error);
+    console.error("Failed to get location info:", error);
     return null;
   }
 };

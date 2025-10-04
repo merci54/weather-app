@@ -5,6 +5,7 @@ import "modern-normalize";
 import Header from "@/components/Header/Header";
 import GeolocationChecker from "@/components/GeolocationChecker/GeolocationChecker";
 import { Toaster } from "react-hot-toast";
+import { Suspense } from "react";
 
 const DMSans = DM_Sans({
   variable: "--font-dm-sans",

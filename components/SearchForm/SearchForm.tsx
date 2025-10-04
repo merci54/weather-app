@@ -1,6 +1,6 @@
 "use client";
 
-import { Field, Form, Formik, FormikHelpers, FormikValues } from "formik";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import css from "./SearchForm.module.css";
 import * as Yup from "yup";
 import {
