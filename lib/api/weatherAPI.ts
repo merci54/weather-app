@@ -113,3 +113,20 @@ export const getFormattedDate = () => {
 
   return `${dayName}, ${monthName} ${dateNumber}, ${year}`;
 };
+
+export const getReverseGeocoding = async (coords: Location) => {
+  try {
+    const response = await axios.get(
+      `https://geocoding-api.open-meteo.com/v1/search?latitude=${coords.latitude}&longitude=${coords.longitude}&count=1`
+    );
+
+    if (response.data.results && response.data.results.length > 0) {
+      return response.data.results[0];
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Reverse geocoding failed:", error);
+    return null;
+  }
+};

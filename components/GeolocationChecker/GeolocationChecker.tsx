@@ -1,9 +1,9 @@
 "use client";
 
-import { getWeather } from "@/lib/api/weatherAPI";
+import { getWeather, getReverseGeocoding } from "@/lib/api/weatherAPI";
 import { useUnitsStore } from "@/lib/stores/unitsStore";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { Location } from "@/types/location";
 
 export default function GeolocationChecker() {
   const {
@@ -14,59 +14,70 @@ export default function GeolocationChecker() {
     setCountry,
     setCity,
     hasHydrated,
+    currentWeather,
   } = useUnitsStore();
 
-  useEffect(() => {
-    if (!hasHydrated) return;
+  const setDefaultWeather = async () => {
+    try {
+      const defaultCoords: Location = { latitude: 51.5074, longitude: -0.1278 };
+      const weather = await getWeather(
+        defaultCoords,
+        temp,
+        speed,
+        precipitation
+      );
+      const locationInfo = await getReverseGeocoding(defaultCoords);
 
-    const getWeatherByIP = async () => {
-      try {
-        const { data: ipData } = await axios("https://ipapi.co/json/");
+      const current = {
+        feelsLike: Math.trunc(weather.current.apparent_temperature),
+        humidity: weather.current.relative_humidity_2m,
+        wind: Math.trunc(weather.current.wind_speed_10m),
+        precipitation: weather.current.precipitation,
+        temperature: Math.trunc(weather.current.temperature_2m),
+        weatherCode: weather.current.weather_code,
+      };
 
-        const weather = await getWeather(
-          { latitude: ipData.latitude, longitude: ipData.longitude },
-          temp,
-          speed,
-          precipitation
-        );
+      setCurrentWeather(current);
 
-        const current = {
-          feelsLike: Math.trunc(weather.current.apparent_temperature),
-          humidity: weather.current.relative_humidity_2m,
-          wind: Math.trunc(weather.current.wind_speed_10m),
-          precipitation: weather.current.precipitation,
-          temperature: Math.trunc(weather.current.temperature_2m),
-          weatherCode: weather.current.weather_code,
-        };
-
-        setCurrentWeather(current);
-        setCountry(ipData.country_name);
-        setCity(ipData.city);
-      } catch (error) {
-        console.log("IP location failed, trying geolocation...");
-        tryGetPreciseLocation();
+      if (locationInfo) {
+        setCountry(locationInfo.country);
+        setCity(locationInfo.name);
+      } else {
+        setCountry("United Kingdom");
+        setCity("London");
       }
-    };
+    } catch (error) {
+      console.error("Failed to set default weather:", error);
+    }
+  };
 
-    const tryGetPreciseLocation = () => {
+  useEffect(() => {
+    if (!hasHydrated || currentWeather) {
+      return;
+    }
+
+    const getAutoWeather = async () => {
       if (!navigator.geolocation) {
+        console.log("Geolocation is not supported");
+        await setDefaultWeather();
         return;
       }
 
       const options = {
-        enableHighAccuracy: false,
-        timeout: 3000,
+        enableHighAccuracy: true,
+        timeout: 10000,
         maximumAge: 300000,
       };
 
-      const success = async ({ coords }: GeolocationPosition) => {
+      const success = async (position: GeolocationPosition) => {
         try {
-          const weather = await getWeather(
-            { latitude: coords.latitude, longitude: coords.longitude },
-            temp,
-            speed,
-            precipitation
-          );
+          const { latitude, longitude } = position.coords;
+          const coords: Location = { latitude, longitude };
+
+          const [weather, locationInfo] = await Promise.all([
+            getWeather(coords, temp, speed, precipitation),
+            getReverseGeocoding(coords),
+          ]);
 
           const current = {
             feelsLike: Math.trunc(weather.current.apparent_temperature),
@@ -78,48 +89,33 @@ export default function GeolocationChecker() {
           };
 
           setCurrentWeather(current);
+
+          if (locationInfo) {
+            setCountry(locationInfo.country);
+            setCity(locationInfo.name);
+          } else {
+            setCountry("Your Location");
+            setCity(`${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`);
+          }
+
+          console.log("Weather loaded successfully from geolocation");
         } catch (error) {
-          console.error("Failed to get weather:", error);
+          console.error("Failed to get weather from geolocation:", error);
+          await setDefaultWeather();
         }
       };
 
-      const error = () => {
-        setDefaultWeather();
+      const error = async (err: GeolocationPositionError) => {
+        console.log("Geolocation error:", err);
+        await setDefaultWeather();
       };
-
       navigator.geolocation.getCurrentPosition(success, error, options);
     };
 
-    const setDefaultWeather = async () => {
-      try {
-        const defaultCoords = { latitude: 51.5074, longitude: -0.1278 };
-        const weather = await getWeather(
-          defaultCoords,
-          temp,
-          speed,
-          precipitation
-        );
-
-        const current = {
-          feelsLike: Math.trunc(weather.current.apparent_temperature),
-          humidity: weather.current.relative_humidity_2m,
-          wind: Math.trunc(weather.current.wind_speed_10m),
-          precipitation: weather.current.precipitation,
-          temperature: Math.trunc(weather.current.temperature_2m),
-          weatherCode: weather.current.weather_code,
-        };
-
-        setCurrentWeather(current);
-        setCountry("United Kingdom");
-        setCity("London");
-      } catch (error) {
-        console.error("Failed to set default weather:", error);
-      }
-    };
-
-    getWeatherByIP();
+    getAutoWeather();
   }, [
     hasHydrated,
+    currentWeather,
     temp,
     speed,
     precipitation,
