@@ -1,9 +1,10 @@
 "use client";
 
-import { getWeather, getReverseGeocoding } from "@/lib/api/weatherAPI";
+import { getWeather } from "@/lib/api/weatherAPI";
 import { useUnitsStore } from "@/lib/stores/unitsStore";
 import { useEffect } from "react";
 import { Location } from "@/types/location";
+import axios from "axios";
 
 export default function GeolocationChecker() {
   const {
@@ -17,6 +18,41 @@ export default function GeolocationChecker() {
     currentWeather,
   } = useUnitsStore();
 
+  const getLocationByCoords = async (coords: Location) => {
+    try {
+      const response = await axios.get(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`
+      );
+
+      return {
+        city: response.data.city || response.data.locality || "Unknown City",
+        country: response.data.countryName || "Unknown Country",
+      };
+    } catch (error) {
+      console.error("Failed to get location info from BigDataCloud:", error);
+
+      try {
+        const fallbackResponse = await axios.get(
+          `https://geocoding-api.open-meteo.com/v1/search?name=&latitude=${coords.latitude}&longitude=${coords.longitude}&count=1`
+        );
+
+        if (
+          fallbackResponse.data.results &&
+          fallbackResponse.data.results.length > 0
+        ) {
+          return {
+            city: fallbackResponse.data.results[0].name,
+            country: fallbackResponse.data.results[0].country,
+          };
+        }
+      } catch (fallbackError) {
+        console.error("Fallback geocoding also failed:", fallbackError);
+      }
+    }
+
+    return null;
+  };
+
   const setDefaultWeather = async () => {
     try {
       const defaultCoords: Location = { latitude: 51.5074, longitude: -0.1278 };
@@ -26,7 +62,6 @@ export default function GeolocationChecker() {
         speed,
         precipitation
       );
-      const locationInfo = await getReverseGeocoding(defaultCoords);
 
       const current = {
         feelsLike: Math.trunc(weather.current.apparent_temperature),
@@ -38,21 +73,19 @@ export default function GeolocationChecker() {
       };
 
       setCurrentWeather(current);
-
-      if (locationInfo) {
-        setCountry(locationInfo.country);
-        setCity(locationInfo.name);
-      } else {
-        setCountry("United Kingdom");
-        setCity("London");
-      }
+      setCountry("United Kingdom");
+      setCity("London");
     } catch (error) {
       console.error("Failed to set default weather:", error);
     }
   };
 
   useEffect(() => {
-    if (!hasHydrated || currentWeather) {
+    if (!hasHydrated) {
+      return;
+    }
+
+    if (currentWeather && currentWeather.temperature !== 0) {
       return;
     }
 
@@ -74,9 +107,11 @@ export default function GeolocationChecker() {
           const { latitude, longitude } = position.coords;
           const coords: Location = { latitude, longitude };
 
+          console.log("Got coordinates:", latitude, longitude);
+
           const [weather, locationInfo] = await Promise.all([
             getWeather(coords, temp, speed, precipitation),
-            getReverseGeocoding(coords),
+            getLocationByCoords(coords),
           ]);
 
           const current = {
@@ -92,13 +127,16 @@ export default function GeolocationChecker() {
 
           if (locationInfo) {
             setCountry(locationInfo.country);
-            setCity(locationInfo.name);
+            setCity(locationInfo.city);
+            console.log(
+              "Location found:",
+              locationInfo.city,
+              locationInfo.country
+            );
           } else {
             setCountry("Your Location");
             setCity(`${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`);
           }
-
-          console.log("Weather loaded successfully from geolocation");
         } catch (error) {
           console.error("Failed to get weather from geolocation:", error);
           await setDefaultWeather();
@@ -109,6 +147,7 @@ export default function GeolocationChecker() {
         console.log("Geolocation error:", err);
         await setDefaultWeather();
       };
+
       navigator.geolocation.getCurrentPosition(success, error, options);
     };
 
