@@ -4,4 +4,5 @@ export interface CurrentWeather {
   wind: number;
   precipitation: number;
   temperature: number;
+  weatherCode: number;
 }

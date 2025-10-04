@@ -87,6 +87,14 @@
   gap: 4px;
 }
 
+.switchBtn {
+  composes: text-preset-7 from global;
+  color: var(--neutral);
+
+  padding: 10px 8px;
+  text-align: start;
+}
+
 .switchBtn:hover {
   background-color: var(--neutral-700);
 }

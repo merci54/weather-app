@@ -18,6 +18,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 83px 24px;
+
+    text-align: start;
   }
 }
 
@@ -76,7 +78,7 @@
 .dataItem {
   background-color: var(--neutral-800);
   border: 1px solid var(--neutral-600);
-  padding: 20px;
+  padding: 18px;
   border-radius: var(--radius-12);
 
   flex-basis: calc((100% - 16px) / 2);

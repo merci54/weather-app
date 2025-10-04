@@ -4,6 +4,7 @@ import "./globals.css";
 import "modern-normalize";
 import Header from "@/components/Header/Header";
 import GeolocationChecker from "@/components/GeolocationChecker/GeolocationChecker";
+import { Toaster } from "react-hot-toast";
 
 const DMSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -31,6 +32,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${DMSans.variable} ${BricolageGrotesque.variable}`}>
+        <div>
+          <Toaster />
+        </div>
+        <GeolocationChecker />
         <Header />
         {children}
       </body>

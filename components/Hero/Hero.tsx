@@ -3,43 +3,11 @@
 import Image from "next/image";
 import css from "./Hero.module.css";
 import { useUnitsStore } from "@/lib/stores/unitsStore";
+import { getFormattedDate, getWeatherIcon } from "@/lib/api/weatherAPI";
 
 export default function Hero() {
   const { currentWeather, city, country, speed, precipitation } =
     useUnitsStore();
-  const getFormattedDate = () => {
-    const now = new Date();
-    const daysOfWeek = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const dayName = daysOfWeek[now.getDay()];
-
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const monthName = months[now.getMonth()];
-    const dateNumber = now.getDate();
-    const year = now.getFullYear();
-
-    return `${dayName}, ${monthName} ${dateNumber}, ${year}`;
-  };
 
   return (
     <section className={css.hero}>
@@ -52,7 +20,7 @@ export default function Hero() {
         </div>
         <div className={css.degreeBlock}>
           <Image
-            src={"/clouds/clear-sunny.png"}
+            src={getWeatherIcon(currentWeather.weatherCode)}
             width={120}
             height={120}
             alt="cloud icon"
