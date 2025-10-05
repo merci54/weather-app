@@ -49,4 +49,8 @@
     align-items: start;
     gap: 32px;
   }
+
+  .mainWrapper {
+    gap: 48px;
+  }
 }

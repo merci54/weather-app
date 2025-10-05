@@ -5,6 +5,12 @@
   gap: 20px;
 }
 
+@media screen and (min-width: 1440px) {
+  .hero {
+    gap: 32px;
+  }
+}
+
 .cityBlock {
   padding: 41px 0;
   text-align: center;

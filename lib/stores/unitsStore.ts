@@ -1,4 +1,8 @@
-import { CurrentWeather } from "@/types/weather";
+import {
+  CurrentWeather,
+  DailyForecastStore,
+  HourlyForecastStore,
+} from "@/types/weather";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -8,8 +12,12 @@ type UnitsStore = {
   precipitation: "mm" | "inch";
   hasHydrated: boolean;
   currentWeather: CurrentWeather;
+  hourlyForecast: HourlyForecastStore;
+  dailyForecast: DailyForecastStore;
   country: string;
   city: string;
+  selectedDay: string;
+  setSelectedDay: (day: string) => void;
   setTemp: (newTemp: "celsius" | "fahrenheit") => void;
   setSpeed: (newSpeed: "kmh" | "mph") => void;
   setPrecipitation: (newPrecipitation: "mm" | "inch") => void;
@@ -17,6 +25,8 @@ type UnitsStore = {
   setCity: (newCity: string) => void;
   setCurrentWeather: (newCurrentWeather: CurrentWeather) => void;
   setHasHydrated: (state: boolean) => void;
+  setHourlyForecast: (hourlyForecast: HourlyForecastStore) => void;
+  setDailyForecast: (dailyForecast: DailyForecastStore) => void;
 };
 
 export const useUnitsStore = create<UnitsStore>()(
@@ -36,6 +46,19 @@ export const useUnitsStore = create<UnitsStore>()(
         weatherCode: 0,
       },
       hasHydrated: false,
+      hourlyForecast: {
+        time: [],
+        temperature: [],
+        weatherCode: [],
+      },
+      dailyForecast: {
+        time: [],
+        weatherCode: [],
+        maxTemp: [],
+        minTemp: [],
+      },
+      selectedDay: new Date().toISOString().split("T")[0],
+      setSelectedDay: (day) => set({ selectedDay: day }),
 
       setTemp: (newTemp) => set({ temp: newTemp }),
       setSpeed: (newSpeed) => set({ speed: newSpeed }),
@@ -46,6 +69,8 @@ export const useUnitsStore = create<UnitsStore>()(
       setCurrentWeather: (newCurrentWeather) =>
         set({ currentWeather: newCurrentWeather }),
       setHasHydrated: (state) => set({ hasHydrated: state }),
+      setDailyForecast: (dailyForecast) => set({ dailyForecast }),
+      setHourlyForecast: (hourlyForecast) => set({ hourlyForecast }),
     }),
 
     {

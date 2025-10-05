@@ -20,8 +20,17 @@ const formSchema = Yup.object().shape({
 });
 
 export default function SearchForm() {
-  const { setCurrentWeather, setCountry, setCity, temp, speed, precipitation } =
-    useUnitsStore();
+  const {
+    setCurrentWeather,
+    setCountry,
+    setCity,
+    setDailyForecast,
+    setHourlyForecast,
+    temp,
+    speed,
+    precipitation,
+    setSelectedDay,
+  } = useUnitsStore();
 
   const initialValues: FormValues = {
     city: "",
@@ -55,8 +64,32 @@ export default function SearchForm() {
         temperature: Math.trunc(weather.current.temperature_2m),
         weatherCode: weather.current.weather_code,
       };
+      const hourlyForecast = {
+        time: weather.hourly.time,
+        temperature: weather.hourly.temperature_2m.map((temp) =>
+          Math.trunc(temp)
+        ),
+        weatherCode: weather.hourly.weather_code,
+      };
+
+      const currentDay = new Date().toISOString().split("T")[0];
+
+      const dailyForecast = {
+        time: weather.daily.time,
+        maxTemp: weather.daily.temperature_2m_max.map((temp) =>
+          Math.trunc(temp)
+        ),
+        minTemp: weather.daily.temperature_2m_min.map((temp) =>
+          Math.trunc(temp)
+        ),
+        weatherCode: weather.daily.weather_code,
+      };
 
       setCurrentWeather(current);
+      setDailyForecast(dailyForecast);
+      setHourlyForecast(hourlyForecast);
+      setSelectedDay(currentDay);
+
       setCountry(country);
       setCity(capitalizeFirstLetter(value.city));
       resetForm();

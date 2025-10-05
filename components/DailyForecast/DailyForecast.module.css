@@ -4,6 +4,7 @@
 
 .title {
   margin-bottom: 20px;
+  composes: text-preset-5 from global;
 }
 
 .dailyList {

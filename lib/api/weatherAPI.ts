@@ -1,10 +1,20 @@
-import { UserInfo } from "@/types/info";
+import { UserInfo, WeatherData } from "@/types/weather";
 import { Location } from "@/types/location";
 import axios from "axios";
 
 interface CoordinatesResponse {
   results: UserInfo[];
 }
+
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 export const getUserInfo = async (location: string) => {
   const { data } = await axios.get<CoordinatesResponse>(
@@ -19,10 +29,9 @@ export const getWeather = async (
   speed: "kmh" | "mph",
   precipitation: "mm" | "inch"
 ) => {
-  const res = await axios.get(
-    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code&hourly=temperature_2m&temperature_unit=${temp}&wind_speed_unit=${speed}&precipitation_unit=${precipitation}&timezone=auto`
+  const res = await axios.get<WeatherData>(
+    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=${temp}&wind_speed_unit=${speed}&precipitation_unit=${precipitation}&timezone=auto&forecast_days=7`
   );
-
   return res.data;
 };
 
@@ -76,21 +85,14 @@ export const getWeatherIcon = (weatherCode: number): string => {
       return "/clouds/overcast.png";
   }
 };
+
 export function capitalizeFirstLetter(city: string) {
   return city.charAt(0).toUpperCase() + city.slice(1);
 }
 
 export const getFormattedDate = () => {
   const now = new Date();
-  const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+
   const dayName = daysOfWeek[now.getDay()];
 
   const months = [
@@ -112,6 +114,19 @@ export const getFormattedDate = () => {
   const year = now.getFullYear();
 
   return `${dayName}, ${monthName} ${dateNumber}, ${year}`;
+};
+
+export const getDayOfWeek = (date: string) => {
+  const day = new Date(date).getDay();
+  return daysOfWeek[day];
+};
+
+export const formatTime = (timeString: string) => {
+  const date = new Date(timeString);
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    hour12: true,
+  });
 };
 
 export const getLocationByCoords = async (coords: Location) => {

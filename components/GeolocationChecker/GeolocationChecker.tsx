@@ -19,6 +19,10 @@ export default function GeolocationChecker() {
     setCountry,
     setCity,
     hasHydrated,
+    setDailyForecast,
+    setHourlyForecast,
+    setSelectedDay,
+    selectedDay,
   } = useUnitsStore();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,7 +45,31 @@ export default function GeolocationChecker() {
         weatherCode: weather.current.weather_code,
       };
 
+      const hourlyForecast = {
+        time: weather.hourly.time,
+        temperature: weather.hourly.temperature_2m.map((temp) =>
+          Math.trunc(temp)
+        ),
+        weatherCode: weather.hourly.weather_code,
+      };
+
+      const dailyForecast = {
+        time: weather.daily.time,
+        maxTemp: weather.daily.temperature_2m_max.map((temp) =>
+          Math.trunc(temp)
+        ),
+        minTemp: weather.daily.temperature_2m_min.map((temp) =>
+          Math.trunc(temp)
+        ),
+        weatherCode: weather.daily.weather_code,
+      };
+
+      const currentDay = new Date().toISOString().split("T")[0];
+
       setCurrentWeather(current);
+      setHourlyForecast(hourlyForecast);
+      setDailyForecast(dailyForecast);
+      setSelectedDay(currentDay);
     } catch (error) {
       console.error("Failed to set default weather:", error);
     } finally {
@@ -72,8 +100,6 @@ export default function GeolocationChecker() {
           const { latitude, longitude } = position.coords;
           const coords: Location = { latitude, longitude };
 
-          console.log("Got coordinates:", latitude, longitude);
-
           const [weather, locationInfo] = await Promise.all([
             getWeather(coords, temp, speed, precipitation),
             getLocationByCoords(coords),
@@ -88,22 +114,45 @@ export default function GeolocationChecker() {
             weatherCode: weather.current.weather_code,
           };
 
+          const hourlyForecast = {
+            time: weather.hourly.time,
+            temperature: weather.hourly.temperature_2m.map((temp) =>
+              Math.trunc(temp)
+            ),
+            weatherCode: weather.hourly.weather_code,
+          };
+          const dailyForecast = {
+            time: weather.daily.time,
+            maxTemp: weather.daily.temperature_2m_max.map((temp) =>
+              Math.trunc(temp)
+            ),
+            minTemp: weather.daily.temperature_2m_min.map((temp) =>
+              Math.trunc(temp)
+            ),
+            weatherCode: weather.daily.weather_code,
+          };
+
+          const currentDay = new Date().toISOString().split("T")[0];
+
+          setSelectedDay(currentDay);
+
           setCurrentWeather(current);
+          setHourlyForecast(hourlyForecast);
+          setDailyForecast(dailyForecast);
+
+          console.log(dailyForecast);
+          console.log(hourlyForecast);
 
           if (locationInfo) {
             setCountry(locationInfo.country);
             setCity(locationInfo.city);
-            console.log(
-              "Location found:",
-              locationInfo.city,
-              locationInfo.country
-            );
           } else {
             setCountry("Your Location");
             setCity(`${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`);
           }
         } catch (error) {
           console.error("Failed to get weather from geolocation:", error);
+
           await setDefaultWeather();
         } finally {
           setIsLoading(false);
