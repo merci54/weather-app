@@ -11,14 +11,14 @@ export default function Home() {
       <Container>
         <h1 className={css.title}>How’s the sky looking today?</h1>
         <SearchForm />
-        <main className={css.mainContent}>
+        <div className={css.mainContent}>
           <div className={css.mainWrapper}>
             <Hero />
             <DailyForecast />
           </div>
 
           <HourlyForecast />
-        </main>
+        </div>
       </Container>
     </main>
   );
