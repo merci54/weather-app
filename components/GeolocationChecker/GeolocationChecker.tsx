@@ -22,7 +22,6 @@ export default function GeolocationChecker() {
     setDailyForecast,
     setHourlyForecast,
     setSelectedDay,
-    selectedDay,
   } = useUnitsStore();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -139,9 +138,6 @@ export default function GeolocationChecker() {
           setCurrentWeather(current);
           setHourlyForecast(hourlyForecast);
           setDailyForecast(dailyForecast);
-
-          console.log(dailyForecast);
-          console.log(hourlyForecast);
 
           if (locationInfo) {
             setCountry(locationInfo.country);

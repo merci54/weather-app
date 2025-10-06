@@ -1,0 +1,24 @@
+.notFound {
+  background-color: inherit;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.title {
+  composes: text-preset-5 from global;
+  text-align: center;
+}
+
+.link {
+  composes: text-preset-5-medium from global;
+  background-color: var(--blue-500);
+  padding: 10px 16px;
+  border-radius: var(--radius-12);
+}

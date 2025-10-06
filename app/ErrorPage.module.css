@@ -1,0 +1,34 @@
+.error {
+  background-color: inherit;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+
+  margin-top: 64px;
+}
+
+.wrapper {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.title {
+  composes: text-preset-2 from global;
+}
+
+.text {
+  composes: text-preset-5-medium from global;
+  color: var(--neutral-200);
+}
+
+.btn {
+  padding: 12px 16px;
+  background-color: var(--neutral-800);
+  border-radius: var(--radius-8);
+  display: flex;
+  gap: 10px;
+
+  composes: text-preset-7 from global;
+}
